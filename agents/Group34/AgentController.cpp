@@ -66,10 +66,37 @@ bool AgentController::interpretMessage(std::string message) {
 }
 
 void AgentController::makeMove(std::string Board) {
+    if (turn == 2 && rand() % 2 == 1){
+        sendMessage("-1,-1");
+        return ;
+    }
 
+    //Splitting board string
+    std::istringstream split(Board);
+    std::vector<std::string> lines;
+    for (std::string each; std::getline(split, each, ","); lines.push_back(each));
 
+    //Finding all posible moves
+    std::vector<std::array<int, 2>> choices;
 
+    for (int i = 0; i < boardSize; i++){
+        for (int j = 0; j < boardSize; j++){
+            if (lines[i][j] == '0') {
+                std::array<int, 2> newElement = {i, j};
+                choices.push_back(newElement);
+            }
+        }
+    }
+
+    //Choosing random move
+    if (choices.size() > 0){
+        std::array<int, 2> choice = choices[rand()%(choices.size())];
+        std::string msg = std::to_string(choice[0]) + "," + std::to_string(choice[1]);
+        sendMessage(msg);
+    }       
 }
+
+
 
 AgentController::AgentController(std::string agentColour, int gameBoardSize) {
     boardSize = gameBoardSize;
