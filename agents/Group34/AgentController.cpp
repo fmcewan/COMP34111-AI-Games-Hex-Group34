@@ -1,66 +1,97 @@
-// Imports
+// Default imports
 #include <string>
 #include <sstream>
 #include <iostream>
-#include <bits/stdc++.h>
+#include <vector>
+#include <exception>
 
-class AgentController {
+// Header imports
+#include "AgentController.h"
 
-   private:
-        std::string input;
-        std::string colour;
-        int turn = 0;
-        int boardSize = 11;
+// enum declarations
 
-        AgentController(std::string agentColour, int gameBoardSize) {
-            boardSize = gameBoardSize;
-            colour = agentColour;
-        }
+std::string AgentController::getMessage() {
+    
+    std::string message;
+    std::cin >> message;
 
-        std::string getMessage() {
-            return std::getline(std::cin, input);
-        }
+    return message;
+}
 
-        void sendMessage(std::string message) {
-            std::cout << message << "\n" << std::flush;
-        
-        bool interpretMessage(std::string s) {
-            turn++;
+void AgentController::sendMessage(std::string message) {
+    std::cout << message << "\n" << std::flush;
+}
 
-            std;:string message = 
+messageType AgentController::stringToEnum(std::string message) {
+    if (message == "START") return START;
+    if (message == "CHANGE") return CHANGE;
+    if (message == "SWAP") return SWAP;
+}
 
-        }
+bool AgentController::interpretMessage(std::string message) {
+    turn++;
 
-        void makeMove(std::string Board) {
-            pass;
-        }
+    // Splitting and stripping the incoming message
+    std::vector< std::string > gameState;
 
-    public: 
-        
-        void run() {
-            input = std::getline(std::cin, input)
+    std::stringstream messagestream(message);
+    std::string parts;
 
-            // Gets string
-            while (true) {
-                
-                try {
-                    std::string message = getMessage();
-                    bool res = interpretMessage(message);
-                    if (res == false) { break; }
-                }
-                catch {
-                    std::cout << "ERROR: Could not establish I/0."
-                    break;
-                }
-            }
-        }
+    while (getline(messagestream, parts, ';')) {
+        parts.erase(std::remove_if(parts.begin(), parts.end(), isspace), parts.end());
+        gameState.push_back(parts);
+    }
 
-        static std::string opp(std::string c) {
-            if (c == "R") { return "B"; }
-            if (c == "B") { return "R"; }
-        }
+    // Interpreting move
+    std::string board = gameState[2];
+    
+    switch (stringToEnum(gameState[0])) {
+        case START:
+            if (colour == "START") {}
+            break;
+        case CHANGE:
+            makeMove(board);
+            break;
+        case SWAP:
+            colour = opp(colour);
+            makeMove(board);
+            break;
+        default:
+            return false;
+    }
 
 }
+
+void AgentController::makeMove(std::string Board) {}
+
+AgentController::AgentController(std::string agentColour, int gameBoardSize) {
+    boardSize = gameBoardSize;
+    colour = agentColour;
+}
+
+void AgentController::run() {
+    std::cin >> messageInput;
+
+    // Gets string
+    while (true) {
+        
+        try {
+            std::string message = getMessage();
+            bool res = interpretMessage(message);
+            if (res == false) { break; }
+        }
+        catch (...) {
+            std::cout << "ERROR: Could not establish I/0.\n";
+            break;
+        }
+    }
+}
+
+std::string AgentController::opp(std::string colour) {
+    if (colour == "R") { return "B"; }
+    if (colour == "B") { return "R"; }
+}
+
 
 int main() {
 
@@ -72,6 +103,6 @@ int main() {
 
     int parsedBoardSize = std::stoi(inputBoardSize);
 
-    AgentController agent = new AgentController(inputColour, inputBoardSize);
+    AgentController agent(inputColour, parsedBoardSize);
 
 }
