@@ -47,7 +47,7 @@ bool AgentController::interpretMessage(std::string message) {
     
     switch (stringToEnum(gameState[0])) {
         case START:
-            if (colour == "START") {
+            if (colour == "R") {
                 makeMove(board);
             }
             break;
