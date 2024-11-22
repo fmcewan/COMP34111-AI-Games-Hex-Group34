@@ -47,7 +47,9 @@ bool AgentController::interpretMessage(std::string message) {
     
     switch (stringToEnum(gameState[0])) {
         case START:
-            if (colour == "START") {}
+            if (colour == "START") {
+                makeMove(board);
+            }
             break;
         case CHANGE:
             makeMove(board);
@@ -58,11 +60,16 @@ bool AgentController::interpretMessage(std::string message) {
             break;
         default:
             return false;
+    
     }
 
 }
 
-void AgentController::makeMove(std::string Board) {}
+void AgentController::makeMove(std::string Board) {
+
+
+
+}
 
 AgentController::AgentController(std::string agentColour, int gameBoardSize) {
     boardSize = gameBoardSize;
@@ -104,5 +111,6 @@ int main() {
     int parsedBoardSize = std::stoi(inputBoardSize);
 
     AgentController agent(inputColour, parsedBoardSize);
+    agent.run();
 
 }
