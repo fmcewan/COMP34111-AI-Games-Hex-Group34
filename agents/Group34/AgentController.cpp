@@ -21,30 +21,39 @@ class AgentController {
             return std::getline(std::cin, input);
         }
 
-        void sendMessage() {}
-
-        bool interpretMessag(std::string s) {
+        void sendMessage(std::string message) {
+            std::cout << message << "\n" << std::flush;
+        
+        bool interpretMessage(std::string s) {
             turn++;
 
-
+            std;:string message = 
 
         }
 
         void makeMove(std::string Board) {
-
+            pass;
         }
 
     public: 
         
         void run() {
-            input = std::getline()
+            input = std::getline(std::cin, input)
 
             // Gets string
-            std::string message = ""; 
-
+            while (true) {
+                
+                try {
+                    std::string message = getMessage();
+                    bool res = interpretMessage(message);
+                    if (res == false) { break; }
+                }
+                catch {
+                    std::cout << "ERROR: Could not establish I/0."
+                    break;
+                }
+            }
         }
-
-        }   
 
         static std::string opp(std::string c) {
             if (c == "R") { return "B"; }
@@ -61,7 +70,7 @@ int main() {
     std::cin >> inputColour;
     std::cin >> inputBoardSize;
 
-    int in = std::stol
+    int parsedBoardSize = std::stoi(inputBoardSize);
 
     AgentController agent = new AgentController(inputColour, inputBoardSize);
 
