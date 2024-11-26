@@ -3,6 +3,7 @@
 #include <sstream>
 #include <iostream>
 #include <vector>
+#include <stdexcept>
 #include <exception>
 
 // Header imports
@@ -37,13 +38,21 @@ bool AgentController::interpretMessage(std::string message) {
     std::stringstream messagestream(message);
     std::string parts;
 
-    while (getline(messagestream, parts, ';')) {
+    std::cout << message << std::endl;
+
+    while (std::getline(messagestream, parts, ';')) {
         parts.erase(std::remove_if(parts.begin(), parts.end(), isspace), parts.end());
         gameState.push_back(parts);
     }
 
+    for (int i = 0; i<gameState.size(); i++) {
+        std::cout << gameState[i];
+    }
+    std::cout << std::endl;
+
     // Interpreting move
     std::string board = gameState[2];
+    std::cout << board << std::endl;
     
     switch (stringToEnum(gameState[0])) {
         case START:
@@ -60,29 +69,40 @@ bool AgentController::interpretMessage(std::string message) {
             break;
         default:
             return false;
-    
     }
 
 }
 
 void AgentController::makeMove(std::string Board) {
+    
     if (turn == 2 && rand() % 2 == 1){
         sendMessage("-1,-1");
-        return ;
+        return;
     }
 
     //Splitting board string
-    std::istringstream split(Board);
+    std::stringstream split(Board);
     std::vector<std::string> lines;
-    for (std::string each; std::getline(split, each, ","); lines.push_back(each));
+    std::string each;
+
+    std::cout << Board <<std::endl;
+
+    while (std::getline(split, each, ',')) {
+        lines.push_back(each);
+    }
+
+    for (int i=0; i<lines.size(); i++) {
+        std::cout << lines[i];
+    }
+    std::cout << std::endl;
 
     //Finding all posible moves
-    std::vector<std::array<int, 2>> choices;
+    std::vector< std::vector<int> > choices;
 
     for (int i = 0; i < boardSize; i++){
         for (int j = 0; j < boardSize; j++){
             if (lines[i][j] == '0') {
-                std::array<int, 2> newElement = {i, j};
+                std::vector<int> newElement(i, j);
                 choices.push_back(newElement);
             }
         }
@@ -90,13 +110,12 @@ void AgentController::makeMove(std::string Board) {
 
     //Choosing random move
     if (choices.size() > 0){
-        std::array<int, 2> choice = choices[rand()%(choices.size())];
+        int choice_index = rand() % (choices.size());
+        std::vector<int> choice = choices[choice_index];
         std::string msg = std::to_string(choice[0]) + "," + std::to_string(choice[1]);
         sendMessage(msg);
     }       
 }
-
-
 
 AgentController::AgentController(std::string agentColour, int gameBoardSize) {
     boardSize = gameBoardSize;
@@ -127,13 +146,18 @@ std::string AgentController::opp(std::string colour) {
 }
 
 
-int main() {
+int main(int argc, char *argv[]) {
 
     std::string inputColour;
     std::string inputBoardSize;
-    
-    std::cin >> inputColour;
-    std::cin >> inputBoardSize;
+
+    if (argc == 3) {
+        inputColour = argv[1];
+        inputBoardSize = argv[2];
+    }
+    else {
+        throw std::invalid_argument("Input must be colour and board size.");
+    }
 
     int parsedBoardSize = std::stoi(inputBoardSize);
 
