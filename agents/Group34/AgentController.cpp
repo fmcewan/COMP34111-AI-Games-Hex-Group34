@@ -5,6 +5,10 @@
 #include <vector>
 #include <stdexcept>
 #include <exception>
+#include <algorithm>  
+#include <cctype>     
+#include <cstdlib>    
+#include <ctime>      
 
 // Header imports
 #include "AgentController.h"
@@ -112,7 +116,7 @@ void AgentController::makeMove(std::string Board) {
     if (choices.size() > 0){
         int choice_index = rand() % (choices.size());
         std::vector<int> choice = choices[choice_index];
-        std::string msg = std::to_string(choice[0]) + "," + std::to_string(choice[1]);
+        std::string msg = std::to_string(choice[0]) + "," + std::to_string(choice[1])+ "\n" ;
         sendMessage(msg);
     }       
 }
