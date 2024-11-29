@@ -2,23 +2,24 @@
 #define MCTS_H
 
 #include "GameState.h"
+#include "Node.h"
 #include <memory>
 
-class MCTSNode {
-public:
-    GameState state;
-    MCTSNode* parent;
-    std::vector<std::shared_ptr<MCTSNode>> children;
-    int visits;
-    double wins;
+//class MCTSNode {
+//public:
+    //GameState state;
+    //MCTSNode* parent;
+    //std::vector<std::shared_ptr<MCTSNode>> children;
+    //int visits;
+    //double wins;
 
-    MCTSNode(const GameState& state, MCTSNode* parent = nullptr);
-    ~MCTSNode();
+    //MCTSNode(const GameState& state, MCTSNode* parent = nullptr);
+    //~MCTSNode();
 
-    std::shared_ptr<MCTSNode> selectBestChild(double explorationConstant) const;
-    void expand();
-    void backpropagate(double result);
-};
+    //std::shared_ptr<MCTSNode> selectBestChild(double explorationConstant) const;
+    //void expand();
+    //void backpropagate(double result);
+//};
 
 class MCTS {
 private:
