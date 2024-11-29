@@ -126,9 +126,6 @@ class Game:
             logger.info(f"Starting Board:\n{str(self.board)}")
             currentPlayer.turn += 1
 
-            boardCopy = copy.deepcopy(self.board)
-            turnCopy = self.turn
-            playerCopy = copy.deepcopy(self.players)
 
             playerBoard = copy.deepcopy(self.board)
 
