@@ -2,34 +2,53 @@
 #define GAMESTATE_H
 
 #include <vector>
-#include <utility>
 #include <string>
+#include <utility>
 
 class GameState {
 private:
-    int currentPlayer;                      // Current player (1 or 2)
-    std::vector<std::vector<int>> board;   // Game board (0: empty, 1: player 1, 2: player 2)
-    int boardSize;                         // Board size (NxN)
-    bool terminalState;                    // Whether the game is in a terminal state
-    int winner;                            // Winner (0: no winner, 1: player 1, 2: player 2)
+    int boardSize;                             // Hex board size (NxN)
+    std::vector<std::vector<int>> board;      // Hex board (0: empty, 1: player 1, 2: player 2)
+    int currentPlayer;                        // Current player (1 or 2)
+    bool terminalState;                       // Whether the game is in a terminal state
+    int winner;                               // Winner (0: no winner, 1: player 1, 2: player 2)
 
-    // Check if the current state is a win for the current player
-    bool checkWin(int x, int y, int player) const;
+    // Hexagonal directions, used for calculating neighbors
+    const std::vector<std::pair<int, int>> hexDirections = {
+        {-1, 0}, {1, 0}, {0, -1}, {0, 1}, {-1, 1}, {1, -1}
+    };
+
+    // Depth-first search for checking connected paths
+    bool dfsCheckWin(int x, int y, int player, std::vector<std::vector<bool>>& visited) const;
 
 public:
+    // Constructors and Destructor
     GameState(int size);
-    GameState(const GameState& other); // Copy constructor
+    GameState(const GameState& other);
     ~GameState();
 
+    // Game state-related methods
     int getCurrentPlayer() const;
-    void applyMove(int x, int y);
-    void undoMove(int x, int y);
     bool isTerminal() const;
     int getWinner() const;
-    int getResult(int player) const;
+
+    // Retrieve legal moves
     std::vector<std::pair<int, int>> getLegalActions() const;
+
+    // Apply and undo moves
+    void applyMove(int x, int y);
+    void undoMove(int x, int y);
+
+    // Print the board
     void printBoard() const;
-    std::vector<float> toFeatures() const;
+
+    // Get neighbors for a given position
+    std::vector<std::pair<int, int>> getNeighbors(int x, int y) const;
+
+    // Check if a player has won
+    bool checkWin(int player) const;
+
+    // Overloaded operator (state comparison)
     bool operator==(const GameState& other) const;
 };
 

@@ -1,6 +1,7 @@
 #include "GameState.h"
 #include <iostream>
-#include <cstdlib> // For rand()
+#include <stack>
+#include <vector>
 
 // Constructor
 GameState::GameState(int size)
@@ -10,38 +11,15 @@ GameState::GameState(int size)
 
 // Copy constructor
 GameState::GameState(const GameState& other)
-    : board(other.board), boardSize(other.boardSize), currentPlayer(other.currentPlayer),
+    : boardSize(other.boardSize), board(other.board), currentPlayer(other.currentPlayer),
       terminalState(other.terminalState), winner(other.winner) {}
 
 // Destructor
 GameState::~GameState() {}
 
-// Get current player
+// Get the current player
 int GameState::getCurrentPlayer() const {
     return currentPlayer;
-}
-
-// Apply a move
-void GameState::applyMove(int x, int y) {
-    if (board[x][y] == 0) {
-        board[x][y] = currentPlayer;
-        terminalState = checkWin(x, y, currentPlayer);
-        if (terminalState) {
-            winner = currentPlayer;
-        } else if (getLegalActions().empty()) {
-            terminalState = true; // Game ends in a draw
-            winner = 0;
-        }
-        currentPlayer = 3 - currentPlayer; // Switch player
-    }
-}
-
-// Undo a move
-void GameState::undoMove(int x, int y) {
-    board[x][y] = 0;
-    currentPlayer = 3 - currentPlayer; // Switch back to previous player
-    terminalState = false;
-    winner = 0;
 }
 
 // Check if the game is in a terminal state
@@ -49,87 +27,114 @@ bool GameState::isTerminal() const {
     return terminalState;
 }
 
-// Get the winner
+// Get the winner of the game
 int GameState::getWinner() const {
     return winner;
 }
 
-// Get result for a specific player
-int GameState::getResult(int player) const {
-    if (winner == player) {
-        return 1; // Current player wins
-    } else if (winner == 3 - player) {
-        return -1; // Opponent wins
-    }
-    return 0; // Draw or ongoing
-}
-
-// Get all legal actions
+// Retrieve legal moves
 std::vector<std::pair<int, int>> GameState::getLegalActions() const {
     std::vector<std::pair<int, int>> actions;
     for (int i = 0; i < boardSize; ++i) {
         for (int j = 0; j < boardSize; ++j) {
             if (board[i][j] == 0) {
-                actions.emplace_back(i, j);
+                actions.emplace_back(i, j); // Add empty positions
             }
         }
     }
     return actions;
 }
 
+// Apply a move
+void GameState::applyMove(int x, int y) {
+    if (board[x][y] == 0) {
+        board[x][y] = currentPlayer; // Current player places a piece
+        if (checkWin(currentPlayer)) { // Check if the current player has won
+            terminalState = true;
+            winner = currentPlayer;
+        } else if (getLegalActions().empty()) { // Check for a draw
+            terminalState = true;
+            winner = 0;
+        }
+        currentPlayer = 3 - currentPlayer; // Switch to the other player
+    }
+}
+
+// Undo a move
+void GameState::undoMove(int x, int y) {
+    board[x][y] = 0;          // Restore the position to empty
+    currentPlayer = 3 - currentPlayer; // Switch back to the previous player
+    terminalState = false;    // Reset terminal state
+    winner = 0;               // Clear the winner
+}
+
 // Print the board
 void GameState::printBoard() const {
-    for (const auto& row : board) {
-        for (int cell : row) {
-            std::cout << cell << " ";
+    for (int i = 0; i < boardSize; ++i) {
+        // Add indentation to align the hexagonal board
+        std::cout << std::string(i, ' ');
+        for (int j = 0; j < boardSize; ++j) {
+            std::cout << board[i][j] << " ";
         }
         std::cout << std::endl;
     }
 }
 
-// Convert the board state to a feature vector
-std::vector<float> GameState::toFeatures() const {
-    std::vector<float> features;
-    for (const auto& row : board) {
-        for (int cell : row) {
-            features.push_back(static_cast<float>(cell));
+// Get neighbors for a given position
+std::vector<std::pair<int, int>> GameState::getNeighbors(int x, int y) const {
+    std::vector<std::pair<int, int>> neighbors;
+    for (const auto& dir : hexDirections) {
+        int nx = x + dir.first;
+        int ny = y + dir.second;
+        if (nx >= 0 && nx < boardSize && ny >= 0 && ny < boardSize) {
+            neighbors.emplace_back(nx, ny);
         }
     }
-    return features;
+    return neighbors;
 }
 
-// Overloaded comparison operator
-bool GameState::operator==(const GameState& other) const {
-    return board == other.board && currentPlayer == other.currentPlayer;
+// Check if a player has won (using depth-first search)
+bool GameState::checkWin(int player) const {
+    std::vector<std::vector<bool>> visited(boardSize, std::vector<bool>(boardSize, false));
+
+    // Player 1 connects from the left to the right
+    if (player == 1) {
+        for (int i = 0; i < boardSize; ++i) {
+            if (board[i][0] == 1 && dfsCheckWin(i, 0, 1, visited)) {
+                return true;
+            }
+        }
+    }
+
+    // Player 2 connects from the top to the bottom
+    if (player == 2) {
+        for (int j = 0; j < boardSize; ++j) {
+            if (board[0][j] == 2 && dfsCheckWin(0, j, 2, visited)) {
+                return true;
+            }
+        }
+    }
+
+    return false;
 }
 
-// Check if the current player wins
-bool GameState::checkWin(int x, int y, int player) const {
-    // Example: Check rows, columns, and diagonals for a win condition
-    int directions[4][2] = {{0, 1}, {1, 0}, {1, 1}, {1, -1}};
-    for (auto& dir : directions) {
-        int count = 1;
-        for (int step = 1; step < boardSize; ++step) {
-            int nx = x + dir[0] * step;
-            int ny = y + dir[1] * step;
-            if (nx >= 0 && nx < boardSize && ny >= 0 && ny < boardSize && board[nx][ny] == player) {
-                ++count;
-            } else {
-                break;
+// Depth-first search helper function
+bool GameState::dfsCheckWin(int x, int y, int player, std::vector<std::vector<bool>>& visited) const {
+    if (player == 1 && y == boardSize - 1) return true; // Player 1 connects to the right
+    if (player == 2 && x == boardSize - 1) return true; // Player 2 connects to the bottom
+
+    visited[x][y] = true;
+    for (const auto& [nx, ny] : getNeighbors(x, y)) {
+        if (!visited[nx][ny] && board[nx][ny] == player) {
+            if (dfsCheckWin(nx, ny, player, visited)) {
+                return true;
             }
-        }
-        for (int step = 1; step < boardSize; ++step) {
-            int nx = x - dir[0] * step;
-            int ny = y - dir[1] * step;
-            if (nx >= 0 && nx < boardSize && ny >= 0 && ny < boardSize && board[nx][ny] == player) {
-                ++count;
-            } else {
-                break;
-            }
-        }
-        if (count >= 5) { // Adjust for specific win condition (e.g., 5 in a row)
-            return true;
         }
     }
     return false;
+}
+
+// Overload comparison operator (compare states)
+bool GameState::operator==(const GameState& other) const {
+    return board == other.board && currentPlayer == other.currentPlayer;
 }
