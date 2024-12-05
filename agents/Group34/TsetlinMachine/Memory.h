@@ -15,8 +15,8 @@ class Memory {
 
         // Getters
         std::unordered_map<std::string, int> getMemory();        
-        std::vector<bool> getLiterals();
-        std::vector<bool> getCondition();
+        std::vector<std::string> getLiterals();
+        std::vector<std::string> getCondition();
 
         // Memory methods 
         void memorize(std::string literal);

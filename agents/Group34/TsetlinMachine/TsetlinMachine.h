@@ -1,7 +1,7 @@
 // Imports
-
-// Header imports
-#include "Memory.h"
+#include <unordered_map>
+#include <string>
+#include <vector>
 
 class TsetlinMachine {
 
@@ -10,7 +10,7 @@ class TsetlinMachine {
         
         bool evaluate_condition(std::unordered_map<std::string, bool> observation, std::vector<std::string> condition);
 
-        void type_1_feedback(std::unordered_map<std::string, bool> bservation, Memory memory);
-        void type_2_feedback(std::unordered_map<std::string, bool> observation, Memory memory);
+        void type_1_feedback(std::unordered_map<std::string, bool> observation);
+        void type_2_feedback(std::unordered_map<std::string, bool> observation);
 
 };
