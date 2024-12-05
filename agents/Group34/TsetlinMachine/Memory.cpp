@@ -6,11 +6,22 @@
 // Header imports
 #include "Memory.h"
 
+
+Memory::Memory(): forgetValue(0), memorizeValue(0), memory({}) {}
+
 Memory::Memory(float forgetThreshold, float memorizeThreshold, std::unordered_map<std::string, int> memory_input): 
             forgetValue(forgetThreshold), memorizeValue(memorizeThreshold), memory(memory_input) {}
 
 std::unordered_map<std::string, int> Memory::getMemory() {
     return memory;
+}
+
+float Memory::getForgetValue() {
+    return forgetValue;
+}
+
+float Memory::getMemorizeValue() {
+    return memorizeValue;
 }
 
 std::vector<std::string> Memory::getLiterals() {
@@ -71,6 +82,18 @@ void Memory::always_memorize(std::string literal) {
     if (literalIterator->second < 10) {
         literalIterator->second++;
     } 
+
+}
+
+bool operator!=(Memory& memory1, Memory& memory2) {
+
+    if (memory1.getMemory() != memory2.getMemory() 
+    || memory1.getForgetValue() != memory2.getForgetValue() 
+    || memory1.getMemorizeValue() != memory2.getMemorizeValue()) {
+        return true;   
+    }
+
+    return false;
 
 }
 
