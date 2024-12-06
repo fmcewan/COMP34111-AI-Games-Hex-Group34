@@ -5,15 +5,15 @@
 // Header imports
 #include "TsetlinMachine.h"
 
-TsetlinMachine::TsetlinMachine(Memory memoryInput, float memorizeValue, float forgetValue) {
+TsetlinMachine::TsetlinMachine(Memory memoryInput) {
 
-    Memory defaultMemory = Memory(forgetValue, memorizeValue, {});
+    Memory defaultMemory = Memory(0, 0, {});
 
     if (memoryInput != defaultMemory)  {
         memory = memoryInput;
     } 
     else {
-        memory = Memory(forgetValue, memorizeValue, {});
+        memory = defaultMemory;
     }
 
 }
@@ -85,7 +85,7 @@ void TsetlinMachine::type1Feedback(std::unordered_map<std::string, bool> observa
 
 void TsetlinMachine::type2Feedback(std::unordered_map<std::string, bool> observation) {
     
-    std::string not_string = "NOT ";
+    std::string nottring = "NOT ";
 
     if (evaluate_condition(observation, memory.getCondition()) == true) {
         
@@ -107,5 +107,10 @@ void TsetlinMachine::type2Feedback(std::unordered_map<std::string, bool> observa
 
 int main() {
 
+    std::unordered_map<std::string, int> memory_map = {{"Four Wheels", 5}, {"NOT Four Wheels", 5}, {"Transports People", 5}, {"NOT Transports People", 5}, {"Wings", 5}, {"NOT Wings", 5}, {"Yellow", 5}, {"NOT Yellow", 5}, {"Blue", 5}, {"NOT Blue", 5}};
+
+    Memory memory = Memory(0.9, 0.1, memory_map);
+
+    TsetlinMachine machine = TsetlinMachine(memory);
 
 }

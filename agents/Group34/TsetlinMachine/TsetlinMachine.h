@@ -12,7 +12,7 @@ class TsetlinMachine {
         Memory memory;
 
     public:
-        TsetlinMachine(Memory memory, float forgetValue, float memorizeValue);
+        TsetlinMachine(Memory memory);
         
         bool evaluate_condition(std::unordered_map<std::string, bool> observation, std::vector<std::string> condition);
 

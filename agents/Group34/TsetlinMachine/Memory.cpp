@@ -2,6 +2,7 @@
 #include <string>
 #include <algorithm>
 #include <cstdlib>
+#include <iostream>
 
 // Header imports
 #include "Memory.h"
@@ -27,9 +28,10 @@ float Memory::getMemorizeValue() {
 std::vector<std::string> Memory::getLiterals() {
 
     std::vector<std::string> literals;
-    auto key_selector = [](auto pair) { return pair.first; };
 
-    transform(memory.begin(), memory.end(), literals.begin(), key_selector);
+    for (const auto& element : memory) {
+        literals.push_back(element.first);
+    }
 
     return literals;
 
@@ -57,8 +59,9 @@ std::vector<std::string> Memory::getCondition() {
 void Memory::memorize(std::string literal) {
 
     auto literalIterator = memory.find(literal);
+    double random = (double)rand()/RAND_MAX;
 
-    if ((rand() % 10) + 1 <= memorizeValue && literalIterator->second < 10) {
+    if (random <= memorizeValue && literalIterator->second < 10) {
         literalIterator->second++;
     }
 
@@ -66,11 +69,11 @@ void Memory::memorize(std::string literal) {
 
 void Memory::forget(std::string literal) {
 
+    auto literalIterator = memory.find(literal);    
+    double random = (double)rand()/RAND_MAX;
 
-    auto literalIterator = memory.find(literal);
-
-    if ((rand() % 10) + 1 <= forgetValue && literalIterator->second > 1) {
-        literalIterator->second--;
+    if (random <= forgetValue && literalIterator->second > 1) {
+        literalIterator->second--; 
     }
 
 }
@@ -97,7 +100,37 @@ bool operator!=(Memory& memory1, Memory& memory2) {
 
 }
 
-int main() {
+// int main() {
 
-    return 0;
-}
+//     std::unordered_map<std::string, int> memory_map = {{"four wheels", 10}, {"not four wheels", 2}, {"transports people", 9}, {"not transports people", 3}, {"wings", 1}, {"not wings", 5}, {"yellow", 1}, {"not yellow", 4}, {"blue", 6}, {"not blue", 4}};
+
+//     memory memory = memory(0.9, 0.1, memory_map);
+
+//     memory.memorize("Blue");
+//     memory.memorize("Blue");
+
+//    std::unordered_map<std::string, int> memory_map_2 = memory.getMemory();
+
+//     std::cout << "Memory" << std::endl;
+//     for (auto element : memory_map_2) {
+//         std::cout << element.first << " " << element.second << std::endl;
+//     }
+//     std::cout << std::endl;
+
+//     std::vector< std::string > literals = memory.getLiterals();
+
+//     std::cout << "Literals" << std::endl;
+//     for (auto literal : literals) {
+//         std::cout << literal << std::endl;
+//     }
+//     std::cout << std::endl;
+
+//     std::vector< std::string > condition = memory.getCondition();
+
+//     std::cout << "Conditions" << std::endl;
+//     for (auto literal : condition) {
+//         std::cout << literal << std::endl;
+//     }
+//     std::cout << std::endl;
+
+// }
