@@ -44,7 +44,7 @@ class ExternalAgent(AgentBase):
             Move: The agent's move
         """
         # translate the python objects into string representations
-        rows = board.tiles()
+        rows = board.tiles
         board_strings = []
         for row in rows:
             row_string = ""
@@ -61,7 +61,8 @@ class ExternalAgent(AgentBase):
         if opp_move is None:
             # should be turn 1
             command = f"START;;{board_string};{turn};"
-        elif opp_move.is_swap():
+        # elif opp_move.is_swap():
+        elif opp_move.x ==-1 and opp_move.y == -1:
             command = f"SWAP;;{board_string};{turn};"
         else:
             command = f"CHANGE;{opp_move.x},{opp_move.y};{board_string};{turn};"
@@ -70,7 +71,10 @@ class ExternalAgent(AgentBase):
         self.agent_process.stdin.write(command + "\n")
         self.agent_process.stdin.flush()
 
+        # print(f"Sent to agent: {command}")
+
         response = self.agent_process.stdout.readline().rstrip()
+        # print(f"[DEBUG] Received from agent: {response}")
 
         # assuming the response takes the form "x,y" with -1,-1 if the agent wants to make a swap move
         x, y = response.split(",")
