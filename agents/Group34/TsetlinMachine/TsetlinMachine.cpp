@@ -5,18 +5,19 @@
 // Header imports
 #include "TsetlinMachine.h"
 
-TsetlinMachine::TsetlinMachine(Memory memoryInput) {
+// Constructor
 
-    Memory defaultMemory = Memory(0, 0, {});
+TsetlinMachine::TsetlinMachine(): memory(Memory(0,0,{})) {}
 
-    if (memoryInput != defaultMemory)  {
-        memory = memoryInput;
-    } 
-    else {
-        memory = defaultMemory;
-    }
+TsetlinMachine::TsetlinMachine(Memory memoryInput): memory(memoryInput) {}
 
+// Getters and setters
+
+Memory TsetlinMachine::getMemory() {
+    return memory;
 }
+
+// Class methods
 
 bool TsetlinMachine::evaluate_condition(std::unordered_map<std::string, bool> observation, std::vector<std::string> condition) {
 
@@ -53,8 +54,8 @@ bool TsetlinMachine::evaluate_condition(std::unordered_map<std::string, bool> ob
 void TsetlinMachine::type1Feedback(std::unordered_map<std::string, bool> observation) {
 
     std::string not_string = "NOT ";
-    std::vector<std::string> remaining_literals = memory.getLiterals();
-    
+    std::vector<std::string> literals = memory.getLiterals();
+
     if (evaluate_condition(observation, memory.getCondition()) == true) {
 
         for (auto feature : observation) {
@@ -64,28 +65,27 @@ void TsetlinMachine::type1Feedback(std::unordered_map<std::string, bool> observa
 
             if (featureIterator->second == true) {
                 memory.memorize(feature_string);
-                remaining_literals.erase(std::remove(remaining_literals.begin(), remaining_literals.end(), feature_string), remaining_literals.end());
+                literals.erase(std::remove(literals.begin(), literals.end(), feature_string), literals.end());
             }
 
             else if (featureIterator->second == false) {
                 memory.memorize(not_string + feature_string);
-                remaining_literals.erase(std::remove(remaining_literals.begin(), remaining_literals.end(), not_string+feature_string), remaining_literals.end()); 
+                literals.erase(std::remove(literals.begin(), literals.end(), not_string+feature_string), literals.end()); 
             }
 
         }
 
     }
 
-    for (auto literal : remaining_literals) {
+    for (auto literal : literals) {
         memory.forget(literal);
     }
-
 
 }
 
 void TsetlinMachine::type2Feedback(std::unordered_map<std::string, bool> observation) {
     
-    std::string nottring = "NOT ";
+    std::string not_string = "NOT ";
 
     if (evaluate_condition(observation, memory.getCondition()) == true) {
         
@@ -97,20 +97,75 @@ void TsetlinMachine::type2Feedback(std::unordered_map<std::string, bool> observa
             if (featureIterator->second == false) {
                 memory.always_memorize(feature_string);
             }
-            else if (featureIterator->second == false) {
-                memory.always_memorize("NOT " + feature_string);
+            else if (featureIterator->second == true) {
+                memory.always_memorize(not_string + feature_string);
+    
             } 
         }
     }
 
 }
 
+bool TsetlinMachine::classify(std::unordered_map<std::string, bool> observation, std::vector<Memory> win_rules, std::vector<Memory> loss_rules) {
+
+    int sum = 0;
+
+    for (auto win_rule : win_rules) {
+        if (evaluate_condition(observation, win_rule.getCondition()) == true) {
+            sum++;
+        }
+    }
+
+    for (auto loss_rule : loss_rules) {
+        if (evaluate_condition(observation, loss_rule.getCondition()) == true) {
+            sum--;
+        }
+    }
+
+    if (sum >= 0) {
+        return true;
+    }
+    else {
+        return false;
+    }
+
+}
+
 int main() {
 
-    std::unordered_map<std::string, int> memory_map = {{"Four Wheels", 5}, {"NOT Four Wheels", 5}, {"Transports People", 5}, {"NOT Transports People", 5}, {"Wings", 5}, {"NOT Wings", 5}, {"Yellow", 5}, {"NOT Yellow", 5}, {"Blue", 5}, {"NOT Blue", 5}};
+    // Defining some observations
+    std::vector < std::unordered_map<std::string, bool> > car_observations;
+    std::vector < std::unordered_map<std::string, bool> > plane_observations;
 
-    Memory memory = Memory(0.9, 0.1, memory_map);
+    std::unordered_map< std::string, bool > car_observation1 = {{"Four Wheels", true}, {"Transports People", true}, {"Wings", false}, {"Yellow", false}, {"Blue", true}};
+    std::unordered_map< std::string, bool > car_observation2 = {{"Four Wheels", true}, {"Transports People", true}, {"Wings", false}, {"Yellow", true}, {"Blue", false}};
+    std::unordered_map< std::string, bool > car_observation3 = {{"Four Wheels", true}, {"Transports People", true}, {"Wings", false}, {"Yellow", true}, {"Blue", false}};
 
+    car_observations.push_back(car_observation1);
+    car_observations.push_back(car_observation2);
+    car_observations.push_back(car_observation3);
+
+    std::unordered_map<std::string, bool> plane_observation1 = {{"Four Wheels", true}, {"Transports People", true}, {"Wings", true}, {"Yellow", false}, {"Blue", true}};
+    std::unordered_map<std::string, bool> plane_observation2 = {{"Four Wheels", true}, {"Transports People", false}, {"Wings", true}, {"Yellow", true}, {"Blue", false}};
+    std::unordered_map<std::string, bool> plane_observation3 = {{"Four Wheels", false}, {"Transports People", true}, {"Wings", true}, {"Yellow", false}, {"Blue", true}};
+
+    plane_observations.push_back(plane_observation1);
+    plane_observations.push_back(plane_observation2);
+    plane_observations.push_back(plane_observation3);
+
+    std::unordered_map<std::string, int> memory_map = {{"Four Wheels", 10}, {"NOT Four Wheels", 1}, {"Transports People", 10}, {"NOT Transports People", 1}, {"Wings", 10}, {"NOT Wings", 1}, {"Yellow", 10}, {"NOT Yellow", 1}, {"Blue", 10}, {"NOT Blue", 1}};
+
+    Memory memory = Memory(0.1, 0.9, memory_map);
+    
     TsetlinMachine machine = TsetlinMachine(memory);
+
+    Memory tmMemory = machine.getMemory();
+
+    std::unordered_map< std::string, int > memory_map_2 = tmMemory.getMemoryMap();
+
+    for (auto memory : memory_map_2) {
+        std::cout << memory.first << " " << memory.second << std::endl;
+    }
+    std::cout << std::endl;
 
 }
