@@ -45,11 +45,30 @@ std::vector<std::pair<int, int>> GameState::getLegalActions() const {
     return actions;
 }
 
-// Apply a move
+// // Apply a move
+// void GameState::applyMove(int x, int y) {
+//     if (board[x][y] == 0) {
+//         board[x][y] = currentPlayer; // Current player places a piece
+
+//         lastMove = std::make_pair(x, y); // Store the last move
+        
+//         if (checkWin(currentPlayer)) { // Check if the current player has won
+//             terminalState = true;
+//             winner = currentPlayer;
+//         } else if (getLegalActions().empty()) { // Check for a draw
+//             terminalState = true;
+//             winner = 0;
+//         }
+//         currentPlayer = 3 - currentPlayer; // Switch to the other player
+//     }
+// }
+
 void GameState::applyMove(int x, int y) {
     if (board[x][y] == 0) {
-        board[x][y] = currentPlayer; // Current player places a piece
-        if (checkWin(currentPlayer)) { // Check if the current player has won
+        board[x][y] = currentPlayer; // Use the provided player
+        lastMove = std::make_pair(x, y); // Store the last move
+
+        if (checkWin(currentPlayer)) { // Check if the player has won
             terminalState = true;
             winner = currentPlayer;
         } else if (getLegalActions().empty()) { // Check for a draw
@@ -58,6 +77,14 @@ void GameState::applyMove(int x, int y) {
         }
         currentPlayer = 3 - currentPlayer; // Switch to the other player
     }
+}
+
+
+
+
+// Return last move
+std::pair<int, int> GameState::getLastMove() const {
+    return lastMove;
 }
 
 // Undo a move
@@ -138,3 +165,11 @@ bool GameState::dfsCheckWin(int x, int y, int player, std::vector<std::vector<bo
 bool GameState::operator==(const GameState& other) const {
     return board == other.board && currentPlayer == other.currentPlayer;
 }
+
+
+// void GameState::applyMove(int x, int y, int player) {
+//     if (board[x][y] == 0) {
+//         board[x][y] = player;
+//         currentPlayer = 3 - player;
+//     }
+// }

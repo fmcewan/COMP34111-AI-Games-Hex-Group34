@@ -5,21 +5,6 @@
 #include "Node.h"
 #include <memory>
 
-//class MCTSNode {
-//public:
-    //GameState state;
-    //MCTSNode* parent;
-    //std::vector<std::shared_ptr<MCTSNode>> children;
-    //int visits;
-    //double wins;
-
-    //MCTSNode(const GameState& state, MCTSNode* parent = nullptr);
-    //~MCTSNode();
-
-    //std::shared_ptr<MCTSNode> selectBestChild(double explorationConstant) const;
-    //void expand();
-    //void backpropagate(double result);
-//};
 
 class MCTS {
 private:
@@ -31,7 +16,24 @@ public:
     MCTS(const GameState& initialState, int maxIterations = 1000, double explorationConstant = 1.41);
     ~MCTS();
 
-    std::pair<int, int> run();
+
+    // Perform the MCTS search and return the best move
+    std::pair<int, int> search();
+
+private:
+    // Simulate a random game from the given node and return the result (1.0 = win, 0.0 = loss, 0.5 = draw)
+    double simulate(const std::shared_ptr<MCTSNode>& node);
 };
 
 #endif // MCTS_H
+
+
+// public:
+//     MCTS(const GameState& initialState, int maxIterations, double explorationConstant);
+//     ~MCTS();
+
+//     // Perform the MCTS search and return the best move
+//     std::pair<int, int> search();
+// };
+
+

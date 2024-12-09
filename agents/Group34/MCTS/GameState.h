@@ -12,6 +12,7 @@ private:
     int currentPlayer;                        // Current player (1 or 2)
     bool terminalState;                       // Whether the game is in a terminal state
     int winner;                               // Winner (0: no winner, 1: player 1, 2: player 2)
+    std::pair<int, int> lastMove;             // Add a member to store the last move
 
     // Hexagonal directions, used for calculating neighbors
     const std::vector<std::pair<int, int>> hexDirections = {
@@ -37,6 +38,7 @@ public:
 
     // Apply and undo moves
     void applyMove(int x, int y);
+    // void applyMove(int x, int y, int player);
     void undoMove(int x, int y);
 
     // Print the board
@@ -50,6 +52,9 @@ public:
 
     // Overloaded operator (state comparison)
     bool operator==(const GameState& other) const;
+
+    // Method to get the last move
+    std::pair<int, int> getLastMove() const;
 };
 
 #endif // GAMESTATE_H

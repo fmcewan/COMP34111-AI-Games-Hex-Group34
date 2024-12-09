@@ -2,6 +2,8 @@
 #include "Node.h"
 #include <cmath>
 #include <stdexcept>
+#include <cfloat>
+#include <algorithm>
 
 // MCTSNode Constructor
 MCTSNode::MCTSNode(const GameState& state, MCTSNode* parent)
@@ -10,19 +12,6 @@ MCTSNode::MCTSNode(const GameState& state, MCTSNode* parent)
 // Destructor
 MCTSNode::~MCTSNode() {}
 
-//Node* Node::getParent() const {
-
-    //return parent;
-//}
-
-//std::vector<Node*>Node::getChildren() const {
-    //return children;
-//}
-
-//int Node::getVisits() const {
-
-//     return visits;
-// }
 
 // Select the best child using UCB1
 std::shared_ptr<MCTSNode> MCTSNode::selectBestChild(double explorationConstant) const {

@@ -11,6 +11,11 @@
 // Header imports
 #include "AgentController.h"
 
+#include "MCTS/GameState.h"
+#include "MCTS/MCTS.h"
+#include "MCTS/Node.h"
+
+
 std::string AgentController::getMessage() {
     std::string message;
     std::getline(std::cin, message);
@@ -66,40 +71,75 @@ bool AgentController::interpretMessage(std::string message) {
     return true;
 }
 
+// void AgentController::makeMove(std::string Board) {
+//     if (turn == 2 && rand() % 2 == 1) {
+//         sendMessage("-1,-1");
+//         return;
+//     }
+
+//     //Splitting board string
+//     std::stringstream split(Board);
+//     std::vector<std::string> lines;
+//     std::string each;
+
+//     while (std::getline(split, each, ',')) {
+//         lines.push_back(each);
+//     }
+
+//     //Finding all posible moves
+//     std::vector<std::vector<int>> choices;
+
+//     for (int i = 0; i < boardSize; i++) {
+//         for (int j = 0; j < boardSize; j++) {
+//             if (lines[i][j] == '0') {
+//                 choices.push_back({i, j});
+//             }
+//         }
+//     }
+
+//     //Choosing random move
+//     if (!choices.empty()) {
+//         int choice_index = rand() % choices.size();
+//         std::vector<int> choice = choices[choice_index];
+//         std::string msg = std::to_string(choice[0]) + "," + std::to_string(choice[1]);
+//         sendMessage(msg);
+//     }
+// }
+
 void AgentController::makeMove(std::string Board) {
     if (turn == 2 && rand() % 2 == 1) {
-        sendMessage("-1,-1");
+        sendMessage("-1,-1"); // Random swap decision for turn 2
         return;
     }
 
-    //Splitting board string
-    std::stringstream split(Board);
-    std::vector<std::string> lines;
-    std::string each;
-
-    while (std::getline(split, each, ',')) {
-        lines.push_back(each);
-    }
-
-    //Finding all posible moves
-    std::vector<std::vector<int>> choices;
-
-    for (int i = 0; i < boardSize; i++) {
-        for (int j = 0; j < boardSize; j++) {
-            if (lines[i][j] == '0') {
-                choices.push_back({i, j});
-            }
+    // Parse board string into GameState
+    GameState gameState(boardSize);
+    for (int i = 0; i < boardSize; ++i) {
+        for (int j = 0; j < boardSize; ++j) {
+            char cell = Board[i * boardSize + j];
+            // if (cell == '1') gameState.applyMove(i, j, 1);
+            // else if (cell == '2') gameState.applyMove(i, j, 2);
+            // If the cell is occupied by player 1 or player 2, apply the move using the currentPlayer
+            if (cell == '1' || cell == '2') {
+                gameState.applyMove(i, j);  // Apply the move without specifying the player
+             }
         }
     }
 
-    //Choosing random move
-    if (!choices.empty()) {
-        int choice_index = rand() % choices.size();
-        std::vector<int> choice = choices[choice_index];
-        std::string msg = std::to_string(choice[0]) + "," + std::to_string(choice[1]);
-        sendMessage(msg);
-    }
+    
+    // // Run MCTS to determine the best move
+    // auto bestMove = search(gameState, 1000, 1.41); // 1000 iterations, exploration constant sqrt(2)
+
+    // Now run MCTS to determine the best move
+    MCTS mcts(gameState, 1000, 1.41);  // 1000 iterations, exploration constant sqrt(2)
+    std::pair<int, int> bestMove = mcts.search();  // Call the search function
+
+    // Send the selected move
+    std::string msg = std::to_string(bestMove.first) + "," + std::to_string(bestMove.second);
+    sendMessage(msg);
 }
+
+
 
 AgentController::AgentController(std::string agentColour, int gameBoardSize) {
     boardSize = gameBoardSize;
