@@ -106,6 +106,8 @@ void GameState::applyMove(int x, int y) {
             winner = 0;
         }
         currentPlayer = 3 - currentPlayer; // Switch to the other player
+
+        //std::cerr << "[DEBUG] Last move: (" << lastMove.first << ", " << lastMove.second << ")" << std::endl;
     }
 }
 
@@ -122,6 +124,9 @@ void GameState::makeBoard(int x, int y, int player) {
     if (board[x][y] == 0) {
         board[x][y] = player; // Use the provided player
         lastMove = std::make_pair(x, y); // Store the last move
+        // print la
+
+       
 
         if (checkWin(player)) { // Check if the player has won
             terminalState = true;
@@ -130,6 +135,8 @@ void GameState::makeBoard(int x, int y, int player) {
             terminalState = true;
             winner = 0;
         }
+
+
 
     }
 }

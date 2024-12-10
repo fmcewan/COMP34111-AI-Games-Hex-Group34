@@ -6,7 +6,7 @@
 #include <cstdlib>
 #include <limits>
 #include <random>
-
+#include <iostream>
 
 
 // MCTS Constructor
@@ -29,6 +29,11 @@ std::pair<int, int> MCTS::search() {
         if (root->children.empty()) {
          root->expand();  // Expand root if it has no children yet
         }
+
+
+
+        std::cerr << "[DEBUG] Expanded child with move: " << root->children[5]->state.getLastMove().second << std::endl;
+
 
         // Selection: Select the best child node based on UCB1
         auto selectedNode = root->selectBestChild(explorationConstant);
@@ -66,6 +71,8 @@ double MCTS::simulate(const std::shared_ptr<MCTSNode>& node) {
         auto action = legalActions[rand() % legalActions.size()];
         tempState.applyMove(action.first, action.second);
     }
+
+    //node->state = tempState;
 
     int winner = tempState.getWinner();
     if (winner == node->state.getCurrentPlayer()) return 1.0;  // Win
