@@ -32,18 +32,48 @@ int GameState::getWinner() const {
     return winner;
 }
 
-// Retrieve legal moves
+// // Retrieve legal moves
+// std::vector<std::pair<int, int>> GameState::getLegalActions() const {
+//     std::vector<std::pair<int, int>> actions;
+//     for (int i = 0; i < boardSize; ++i) {
+//         for (int j = 0; j < boardSize; ++j) {
+//             if (board[i][j] == 0) {
+//                 actions.emplace_back(i, j); // Add empty positions
+//             }
+//         }
+//     }
+//     return actions;
+// }
+
 std::vector<std::pair<int, int>> GameState::getLegalActions() const {
     std::vector<std::pair<int, int>> actions;
     for (int i = 0; i < boardSize; ++i) {
         for (int j = 0; j < boardSize; ++j) {
             if (board[i][j] == 0) {
-                actions.emplace_back(i, j); // Add empty positions
+                actions.emplace_back(i, j);
             }
         }
     }
+
+    // // Debug: Print all legal actions
+    // std::cerr << "[DEBUG] Legal actions:";
+    // if (actions.empty()) {
+    //     std::cerr << " No legal actions found. Board might be full or incorrectly initialized." << std::endl;
+    // } else {
+    //     for (const auto& action : actions) {
+    //         std::cerr << " (" << action.first << ", " << action.second << ")";
+    //     };
+    //     std::cerr << std::endl;
+    // }
+
     return actions;
 }
+
+
+
+
+
+
 
 // // Apply a move
 // void GameState::applyMove(int x, int y) {
@@ -87,23 +117,32 @@ std::pair<int, int> GameState::getLastMove() const {
     return lastMove;
 }
 
-// Undo a move
-void GameState::undoMove(int x, int y) {
-    board[x][y] = 0;          // Restore the position to empty
-    currentPlayer = 3 - currentPlayer; // Switch back to the previous player
-    terminalState = false;    // Reset terminal state
-    winner = 0;               // Clear the winner
+// make board
+void GameState::makeBoard(int x, int y, int player) {
+    if (board[x][y] == 0) {
+        board[x][y] = player; // Use the provided player
+        lastMove = std::make_pair(x, y); // Store the last move
+
+        if (checkWin(player)) { // Check if the player has won
+            terminalState = true;
+            winner = player;
+        } else if (getLegalActions().empty()) { // Check for a draw
+            terminalState = true;
+            winner = 0;
+        }
+
+    }
 }
 
 // Print the board
 void GameState::printBoard() const {
     for (int i = 0; i < boardSize; ++i) {
         // Add indentation to align the hexagonal board
-        std::cout << std::string(i, ' ');
+        std::cerr << std::string(i, ' ');
         for (int j = 0; j < boardSize; ++j) {
-            std::cout << board[i][j] << " ";
+            std::cerr << board[i][j] << " ";
         }
-        std::cout << std::endl;
+        std::cerr << std::endl;
     }
 }
 

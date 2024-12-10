@@ -4,6 +4,10 @@
 #include <stdexcept>
 #include <cfloat>
 #include <algorithm>
+#include <iostream>
+#include <memory>
+
+
 
 // MCTSNode Constructor
 MCTSNode::MCTSNode(const GameState& state, MCTSNode* parent)
@@ -19,6 +23,7 @@ std::shared_ptr<MCTSNode> MCTSNode::selectBestChild(double explorationConstant) 
     if (children.empty()) {
 
     throw std::runtime_error("ERROR: NODE HAS NO CHILDREN TO SELECT BEST CHILD FROm");
+    
     
     }
 
@@ -48,14 +53,30 @@ std::shared_ptr<MCTSNode> MCTSNode::selectBestChild(double explorationConstant) 
 
 
 // Expand node
+// void MCTSNode::expand() {
+//     auto legalActions = state.getLegalActions();
+//     for (const auto& action : legalActions) {
+//         GameState newState = state;
+//         newState.applyMove(action.first, action.second);
+//         children.push_back(std::make_shared<MCTSNode>(newState, this));
+//     }
+// }
+
 void MCTSNode::expand() {
     auto legalActions = state.getLegalActions();
+    if (legalActions.empty()) {
+        std::cout << "[DEBUG] No legal actions available during expansion." << std::endl;
+    }
     for (const auto& action : legalActions) {
         GameState newState = state;
         newState.applyMove(action.first, action.second);
         children.push_back(std::make_shared<MCTSNode>(newState, this));
+        // // Log to a file or a separate stream if needed
+        // std::cerr << "[DEBUG] Expanded child with move: (" << action.first << ", " << action.second << ")" << std::endl;
+
     }
 }
+
 
 // Backpropagate result
 void MCTSNode::backpropagate(double result) {

@@ -38,8 +38,7 @@ public:
 
     // Apply and undo moves
     void applyMove(int x, int y);
-    // void applyMove(int x, int y, int player);
-    void undoMove(int x, int y);
+    void makeBoard(int x, int y, int player );
 
     // Print the board
     void printBoard() const;
