@@ -112,27 +112,37 @@ void AgentController::makeMove(std::string Board) {
         return;
     }
 
+    // Removing , from BOard String
+    std::string cleanBoard;
+    for (char c : Board) {
+        if (c != ',') {
+            cleanBoard += c;
+        }
+    }
+
     // Parse board string into GameState
     GameState gameState(boardSize);
     for (int i = 0; i < boardSize; ++i) {
         for (int j = 0; j < boardSize; ++j) {
-            char cell = Board[i * boardSize + j];
-            // if (cell == '1') gameState.applyMove(i, j, 1);
-            // else if (cell == '2') gameState.applyMove(i, j, 2);
-            // If the cell is occupied by player 1 or player 2, apply the move using the currentPlayer
-            if (cell == '1' || cell == '2') {
-                gameState.applyMove(i, j);  // Apply the move without specifying the player
-             }
+            char cell = cleanBoard[i * boardSize + j];
+            
+            if (cell == 'R') gameState.makeBoard(i, j, 1);
+            else if (cell == 'B') gameState.makeBoard(i, j, 2);
         }
     }
-
     
-    // // Run MCTS to determine the best move
-    // auto bestMove = search(gameState, 1000, 1.41); // 1000 iterations, exploration constant sqrt(2)
+    //Swapping logic for mcts
+    int player;
+    if (colour == "R") {
+        player = 1;
+    }
+    if (colour == "B") {
+        player = 2;
+    }
 
-    // Now run MCTS to determine the best move
-    MCTS mcts(gameState, 1000, 1.41);  // 1000 iterations, exploration constant sqrt(2)
-    std::pair<int, int> bestMove = mcts.search();  // Call the search function
+    // Running MCTS to determine the best move
+    MCTS mcts(gameState, 1000, 1.41, player);  
+    std::pair<int, int> bestMove = mcts.search();  
 
     // Send the selected move
     std::string msg = std::to_string(bestMove.first) + "," + std::to_string(bestMove.second);

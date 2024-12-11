@@ -10,9 +10,9 @@
 
 
 // MCTS Constructor
-MCTS::MCTS(const GameState& initialState, int maxIterations, double explorationConstant)
+MCTS::MCTS(const GameState& initialState, int maxIterations, double explorationConstant, int player)
     : root(std::make_shared<MCTSNode>(initialState)), maxIterations(maxIterations),
-      explorationConstant(explorationConstant) {}
+      explorationConstant(explorationConstant), player(player) {}
 
 // Destructor
 MCTS::~MCTS() {}
@@ -32,10 +32,23 @@ std::pair<int, int> MCTS::search() {
             root->expand();  
         }
 
+        // // If root has no children, expand it
         // if (root->children.empty()) {
+
+        //     std::cerr << "[DEBUG] Printing state" << std::endl;
+        //     root->state.printBoard();
+            
+        //     auto legalActions = root->state.getLegalActions();
+        //     std::cerr << "[DEBUG] Legal actions available during expansion:" << std::endl;
+        //     for (size_t i = 0; i < legalActions.size(); ++i) {
+        //         const auto& action = legalActions[i];
+        //         // Assuming action has a first and second (coordinates or parameters) that can be printed
+        //         std::cerr << "[DEBUG] Action " << i << ": (" << action.first << ", " << action.second << ")" << std::endl;
+        //     }
+
         //     root->expand();  // Expand root if it has no children yet
         //     std::cerr << "[DEBUG] Expanded child at search function " << std::endl;
-        //     for (size_t i = 0; i < std::min(static_cast<size_t>(10), root->children.size()); ++i) {
+        //     for (size_t i = 0; i < root->children.size(); ++i) {
         //         const auto& move = root->children[i]->state.getLastMove();
         //         std::cerr << "[DEBUG] Expanded child " << i 
         //           << " with move: (" << move.first << ", " << move.second << ")" 
@@ -79,7 +92,7 @@ double MCTS::simulate(const std::shared_ptr<MCTSNode>& node) {
     }
 
     int winner = tempState.getWinner();
-    if (winner == node->state.getCurrentPlayer()) return 1.0;  // Win
+    if (winner == player) return 1.0;  // Win
     if (winner == 0) return 0.5;  // Draw
     return 0.0;  // Loss
 }

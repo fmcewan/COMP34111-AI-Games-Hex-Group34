@@ -11,9 +11,10 @@ private:
     std::shared_ptr<MCTSNode> root;
     int maxIterations;
     double explorationConstant;
+    int player;
 
 public:
-    MCTS(const GameState& initialState, int maxIterations = 1000, double explorationConstant = 1.41);
+    MCTS(const GameState& initialState, int maxIterations = 1000, double explorationConstant = 1.41, int player = 1);
     ~MCTS();
 
 

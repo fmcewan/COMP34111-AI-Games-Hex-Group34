@@ -124,10 +124,7 @@ void GameState::makeBoard(int x, int y, int player) {
     if (board[x][y] == 0) {
         board[x][y] = player; // Use the provided player
         lastMove = std::make_pair(x, y); // Store the last move
-        // print la
-
-       
-
+        
         if (checkWin(player)) { // Check if the player has won
             terminalState = true;
             winner = player;
@@ -170,31 +167,32 @@ std::vector<std::pair<int, int>> GameState::getNeighbors(int x, int y) const {
 bool GameState::checkWin(int player) const {
     std::vector<std::vector<bool>> visited(boardSize, std::vector<bool>(boardSize, false));
 
-    // Player 1 connects from the left to the right
+    // Player 1 connects from the top to the bottom
     if (player == 1) {
+        for (int j = 0; j < boardSize; ++j) {
+            if (board[0][j] == 1 && dfsCheckWin(0, j, 1, visited)) {
+                return true;
+            }
+        }
+    }
+    
+    // Player 2 connects from the left to the right
+    if (player == 2) {
         for (int i = 0; i < boardSize; ++i) {
-            if (board[i][0] == 1 && dfsCheckWin(i, 0, 1, visited)) {
+            if (board[i][0] == 2 && dfsCheckWin(i, 0, 2, visited)) {
                 return true;
             }
         }
     }
 
-    // Player 2 connects from the top to the bottom
-    if (player == 2) {
-        for (int j = 0; j < boardSize; ++j) {
-            if (board[0][j] == 2 && dfsCheckWin(0, j, 2, visited)) {
-                return true;
-            }
-        }
-    }
 
     return false;
 }
 
 // Depth-first search helper function
 bool GameState::dfsCheckWin(int x, int y, int player, std::vector<std::vector<bool>>& visited) const {
-    if (player == 1 && y == boardSize - 1) return true; // Player 1 connects to the right
-    if (player == 2 && x == boardSize - 1) return true; // Player 2 connects to the bottom
+    if (player == 1 && x == boardSize - 1) return true; // Player 1 connects to the bottom
+    if (player == 2 && y == boardSize - 1) return true; // Player 2 connects to the right
 
     visited[x][y] = true;
     for (const auto& [nx, ny] : getNeighbors(x, y)) {
@@ -213,9 +211,3 @@ bool GameState::operator==(const GameState& other) const {
 }
 
 
-// void GameState::applyMove(int x, int y, int player) {
-//     if (board[x][y] == 0) {
-//         board[x][y] = player;
-//         currentPlayer = 3 - player;
-//     }
-// }

@@ -91,6 +91,7 @@ void MCTSNode::expand() {
     if (legalActions.empty()) {
         std::cout << "[DEBUG] No legal actions available during expansion." << std::endl;
     }
+
     for (const auto& action : legalActions) {
         GameState newState = state;
         int count = 0;
@@ -143,8 +144,8 @@ void MCTSNode::backpropagate(double result) {
     visits++;
     wins += result;
     if (parent) {
-        parent->backpropagate(1.0 - result); // Flip result for the opponent
-
+        // parent->backpropagate(1.0 - result); // Flip result for the opponent
+        parent->backpropagate(result);
 
     }
 }
