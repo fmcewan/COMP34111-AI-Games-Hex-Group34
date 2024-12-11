@@ -12,7 +12,7 @@ GameState::GameState(int size)
 // Copy constructor
 GameState::GameState(const GameState& other)
     : boardSize(other.boardSize), board(other.board), currentPlayer(other.currentPlayer),
-      terminalState(other.terminalState), winner(other.winner) {}
+      terminalState(other.terminalState), winner(other.winner), lastMove(other.lastMove){}
 
 // Destructor
 GameState::~GameState() {}

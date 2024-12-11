@@ -93,8 +93,21 @@ void MCTSNode::expand() {
     }
     for (const auto& action : legalActions) {
         GameState newState = state;
+        int count = 0;
         newState.applyMove(action.first, action.second);
+        // std::cout << "[DEBUG] checking newState lastMove"<<newState.getLastMove().second << std::endl;
+        
         children.push_back(std::make_shared<MCTSNode>(newState, this));
+    }
+
+
+    // if(count < 10){
+    //     const auto& move = newState.getLastMove();
+    //         std::cerr << "[DEBUG] Expanded newState " 
+    //                 << " with move: (" << move.first << ", " << move.second << ")" 
+    //                 << std::endl;
+    //     count++;
+    //     }
 
 
 
@@ -111,7 +124,17 @@ void MCTSNode::expand() {
         // children.push_back(std::make_shared<MCTSNode>(newState, this));
 
 
-    }
+    
+
+    // std::cerr << "[DEBUG] Expanded child at expand function " << std::endl;
+    // for (size_t i = 0; i < std::min(static_cast<size_t>(10), children.size()); ++i) {
+    //     const auto& move = children[i]->state.getLastMove();
+    //     std::cerr << "[DEBUG] Expanded child " << i 
+    //               << " with move: (" << move.first << ", " << move.second << ")" 
+    //               << std::endl;
+    // }
+    
+
 }
 
 

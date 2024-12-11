@@ -22,44 +22,50 @@ MCTS::~MCTS() {}
 std::pair<int, int> MCTS::search() {
     for (int i = 0; i < maxIterations; ++i) {
 
+        // If root is terminal, stop searching
         if (root->state.isTerminal()) {
             break;  // If root is terminal, stop searching
         }
         
+        // Expand root if it has no children yet
         if (root->children.empty()) {
-         root->expand();  // Expand root if it has no children yet
+            root->expand();  
         }
 
+        // if (root->children.empty()) {
+        //     root->expand();  // Expand root if it has no children yet
+        //     std::cerr << "[DEBUG] Expanded child at search function " << std::endl;
+        //     for (size_t i = 0; i < std::min(static_cast<size_t>(10), root->children.size()); ++i) {
+        //         const auto& move = root->children[i]->state.getLastMove();
+        //         std::cerr << "[DEBUG] Expanded child " << i 
+        //           << " with move: (" << move.first << ", " << move.second << ")" 
+        //           << std::endl;
+        //     }
+        // }
 
 
-        std::cerr << "[DEBUG] Expanded child with move: " << root->children[5]->state.getLastMove().second << std::endl;
 
-
-        // Selection: Select the best child node based on UCB1
+        // Selection
         auto selectedNode = root->selectBestChild(explorationConstant);
 
-        // Expansion: Expand the selected node if it is not terminal
+        // Expansion
         if (!selectedNode->state.isTerminal()) {
             selectedNode->expand();
         }
 
-        // Simulation: Simulate the game from the current node and get the result
+        // Simulation
         double result = simulate(selectedNode);
 
-        // Backpropagation: Backpropagate the result up to the root
+        // Backpropagation
         selectedNode->backpropagate(result);
     }
 
-    // After running the search, select the best child node based on the number of visits
-    auto bestChild = root->selectBestChild(explorationConstant); // You can directly use selectBestChild
+    auto bestChild = root->selectBestChild(explorationConstant); 
 
-    // Return the move of the best child node
     return bestChild->state.getLastMove();
 }
 
 
-
-// Simulate a random game from the current node and return the result
 double MCTS::simulate(const std::shared_ptr<MCTSNode>& node) {
     GameState tempState = node->state;
 
@@ -71,8 +77,6 @@ double MCTS::simulate(const std::shared_ptr<MCTSNode>& node) {
         auto action = legalActions[rand() % legalActions.size()];
         tempState.applyMove(action.first, action.second);
     }
-
-    //node->state = tempState;
 
     int winner = tempState.getWinner();
     if (winner == node->state.getCurrentPlayer()) return 1.0;  // Win
