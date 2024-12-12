@@ -177,10 +177,8 @@ std::shared_ptr<MCTSNode> MCTSNode::selectBestChild(double explorationConstant) 
 
 
         if (ucb1 > bestValue) {
-
             bestValue = ucb1;
             bestChild = child;
-        
         }
 
          // check if node hasnt been visited make it top priority by asigning value of infinity if it hasnt
