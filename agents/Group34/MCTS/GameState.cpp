@@ -17,33 +17,17 @@ GameState::GameState(const GameState& other)
 // Destructor
 GameState::~GameState() {}
 
-// Get the current player
 int GameState::getCurrentPlayer() const {
     return currentPlayer;
 }
 
-// Check if the game is in a terminal state
 bool GameState::isTerminal() const {
     return terminalState;
 }
 
-// Get the winner of the game
 int GameState::getWinner() const {
     return winner;
 }
-
-// // Retrieve legal moves
-// std::vector<std::pair<int, int>> GameState::getLegalActions() const {
-//     std::vector<std::pair<int, int>> actions;
-//     for (int i = 0; i < boardSize; ++i) {
-//         for (int j = 0; j < boardSize; ++j) {
-//             if (board[i][j] == 0) {
-//                 actions.emplace_back(i, j); // Add empty positions
-//             }
-//         }
-//     }
-//     return actions;
-// }
 
 std::vector<std::pair<int, int>> GameState::getLegalActions() const {
     std::vector<std::pair<int, int>> actions;
@@ -55,48 +39,14 @@ std::vector<std::pair<int, int>> GameState::getLegalActions() const {
         }
     }
 
-    // // Debug: Print all legal actions
-    // std::cerr << "[DEBUG] Legal actions:";
-    // if (actions.empty()) {
-    //     std::cerr << " No legal actions found. Board might be full or incorrectly initialized." << std::endl;
-    // } else {
-    //     for (const auto& action : actions) {
-    //         std::cerr << " (" << action.first << ", " << action.second << ")";
-    //     };
-    //     std::cerr << std::endl;
-    // }
-
     return actions;
 }
 
 
-
-
-
-
-
-// // Apply a move
-// void GameState::applyMove(int x, int y) {
-//     if (board[x][y] == 0) {
-//         board[x][y] = currentPlayer; // Current player places a piece
-
-//         lastMove = std::make_pair(x, y); // Store the last move
-        
-//         if (checkWin(currentPlayer)) { // Check if the current player has won
-//             terminalState = true;
-//             winner = currentPlayer;
-//         } else if (getLegalActions().empty()) { // Check for a draw
-//             terminalState = true;
-//             winner = 0;
-//         }
-//         currentPlayer = 3 - currentPlayer; // Switch to the other player
-//     }
-// }
-
 void GameState::applyMove(int x, int y) {
     if (board[x][y] == 0) {
-        board[x][y] = currentPlayer; // Use the provided player
-        lastMove = std::make_pair(x, y); // Store the last move
+        board[x][y] = currentPlayer; 
+        lastMove = std::make_pair(x, y); 
 
         if (checkWin(currentPlayer)) { // Check if the player has won
             terminalState = true;
@@ -106,15 +56,9 @@ void GameState::applyMove(int x, int y) {
             winner = 0;
         }
         currentPlayer = 3 - currentPlayer; // Switch to the other player
-
-        //std::cerr << "[DEBUG] Last move: (" << lastMove.first << ", " << lastMove.second << ")" << std::endl;
     }
 }
 
-
-
-
-// Return last move
 std::pair<int, int> GameState::getLastMove() const {
     return lastMove;
 }
@@ -122,8 +66,8 @@ std::pair<int, int> GameState::getLastMove() const {
 // make board
 void GameState::makeBoard(int x, int y, int player) {
     if (board[x][y] == 0) {
-        board[x][y] = player; // Use the provided player
-        lastMove = std::make_pair(x, y); // Store the last move
+        board[x][y] = player; 
+        lastMove = std::make_pair(x, y); 
         
         if (checkWin(player)) { // Check if the player has won
             terminalState = true;
@@ -138,7 +82,6 @@ void GameState::makeBoard(int x, int y, int player) {
     }
 }
 
-// Print the board
 void GameState::printBoard() const {
     for (int i = 0; i < boardSize; ++i) {
         // Add indentation to align the hexagonal board
@@ -205,9 +148,11 @@ bool GameState::dfsCheckWin(int x, int y, int player, std::vector<std::vector<bo
     return false;
 }
 
-// Overload comparison operator (compare states)
-bool GameState::operator==(const GameState& other) const {
-    return board == other.board && currentPlayer == other.currentPlayer;
-}
+
+
+
+
+
+
 
 

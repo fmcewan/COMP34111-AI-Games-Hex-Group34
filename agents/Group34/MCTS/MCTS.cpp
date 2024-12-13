@@ -24,47 +24,16 @@ std::pair<int, int> MCTS::search() {
 
         // If root is terminal, stop searching
         if (root->state.isTerminal()) {
-            break;  // If root is terminal, stop searching
+            break;  
         }
         
-        // Expand root if it has no children yet
+        // Expansion
         if (root->children.empty()) {
             root->expand();  
         }
 
-        // // If root has no children, expand it
-        // if (root->children.empty()) {
-
-        //     std::cerr << "[DEBUG] Printing state" << std::endl;
-        //     root->state.printBoard();
-            
-        //     auto legalActions = root->state.getLegalActions();
-        //     std::cerr << "[DEBUG] Legal actions available during expansion:" << std::endl;
-        //     for (size_t i = 0; i < legalActions.size(); ++i) {
-        //         const auto& action = legalActions[i];
-        //         // Assuming action has a first and second (coordinates or parameters) that can be printed
-        //         std::cerr << "[DEBUG] Action " << i << ": (" << action.first << ", " << action.second << ")" << std::endl;
-        //     }
-
-        //     root->expand();  // Expand root if it has no children yet
-        //     std::cerr << "[DEBUG] Expanded child at search function " << std::endl;
-        //     for (size_t i = 0; i < root->children.size(); ++i) {
-        //         const auto& move = root->children[i]->state.getLastMove();
-        //         std::cerr << "[DEBUG] Expanded child " << i 
-        //           << " with move: (" << move.first << ", " << move.second << ")" 
-        //           << std::endl;
-        //     }
-        // }
-
-
-
         // Selection
         auto selectedNode = root->selectBestChild(explorationConstant);
-
-        // Expansion
-        if (!selectedNode->state.isTerminal()) {
-            selectedNode->expand();
-        }
 
         // Simulation
         double result = simulate(selectedNode);

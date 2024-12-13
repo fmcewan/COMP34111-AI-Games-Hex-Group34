@@ -22,19 +22,11 @@ public:
     std::pair<int, int> search();
 
 private:
-    // Simulate a random game from the given node and return the result (1.0 = win, 0.0 = loss, 0.5 = draw)
+    // Simulate a random 
     double simulate(const std::shared_ptr<MCTSNode>& node);
 };
 
 #endif // MCTS_H
 
-
-// public:
-//     MCTS(const GameState& initialState, int maxIterations, double explorationConstant);
-//     ~MCTS();
-
-//     // Perform the MCTS search and return the best move
-//     std::pair<int, int> search();
-// };
 
 
